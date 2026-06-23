@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>$3,000 Global ETF Portfolio</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+
+  :root {
+    --bg: #f0f4f8;
+    --surface: #ffffff;
+    --surface2: #e8eef5;
+    --border: #d1dbe8;
+    --text: #1a2332;
+    --muted: #64748b;
+    --accent: #2563eb;
+    --green: #059669;
+    --red: #dc2626;
+    --gold: #d97706;
+    --purple: #7c3aed;
+    --teal: #0891b2;
+    --orange: #ea580c;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    min-height: 100vh;
+  }
+
+  /* ── TOP NAV ── */
+  .top-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(240,244,248,0.97);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .top-nav::-webkit-scrollbar { display: none; }
+
+  .nav-logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    padding: 14px 16px 14px 0;
+    border-right: 1px solid var(--border);
+    margin-right: 8px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .nav-btn {
+    padding: 14px 14px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+  .nav-btn:hover { color: var(--text); }
+  .nav-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* ── PAGE SECTIONS ── */
+  .page { display: none; padding: 20px 16px 60px; }
+  .page.active { display: block; }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, #dbeafe 0%, #f0f4f8 60%, #dcfce7 100%);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 24px 20px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  .hero-eyebrow {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .hero h1 { font-size: 32px; font-weight: 700; line-height: 1.15; margin-bottom: 6px; }
+  .hero h1 .hi { color: var(--green); }
+  .hero .hero-sub { font-size: 13px; color: var(--muted); line-height: 1.5; margin-bottom: 20px; }
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+  .hero-stat {
+    background: rgba(255,255,255,0.7);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 6px;
+  }
+  .hero-stat .hv {
+    font-family: 'Space Mono', monospace;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--green);
+    display: block;
+  }
+  .hero-stat .hl {
+    font-size: 9px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-top: 3px;
+  }
+
+  /* ── MIN-MAX BANNER ── */
+  .minmax-banner {
+    background: linear-gradient(135deg, #dbeafe 0%, #f0f4f8 100%);
+    border: 1px solid var(--accent);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  .mb-label { font-size: 11px; color: var(--muted); font-family: 'Space Mono', monospace; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px; }
+  .mb-range { display: flex; justify-content: center; align-items: center; gap: 14px; margin-bottom: 8px; }
+  .mb-min { font-family: 'Space Mono', monospace; font-size: 28px; font-weight: 700; color: var(--red); }
+  .mb-arrow { font-size: 22px; color: var(--muted); }
+  .mb-max { font-family: 'Space Mono', monospace; font-size: 28px; font-weight: 700; color: var(--green); }
+  .mb-note { font-size: 12px; color: var(--muted); line-height: 1.6; }
+  .mb-note strong { color: var(--accent); }
+
+  /* ── INNER TABS ── */
+  .inner-tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 18px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+  .inner-tabs::-webkit-scrollbar { display: none; }
+  .itab {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 7px 14px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .itab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .ipanel { display: none; }
+  .ipanel.active { display: block; }
+
+  /* ── SECTION TITLE ── */
+  .section-title {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin: 20px 0 10px;
+    font-family: 'Space Mono', monospace;
+  }
+
+  /* ── INFO / WARNING BOXES ── */
+  .info-box {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 14px;
+    font-size: 12px;
+    color: #1e40af;
+    line-height: 1.6;
+  }
+  .info-box strong { color: var(--accent); display: block; margin-bottom: 4px; }
+
+  .warning-box {
+    background: #fffbeb;
+    border: 1px solid #fcd34d;
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 14px;
+    font-size: 12px;
+    color: #92400e;
+    line-height: 1.6;
+  }
+  .warning-box strong { color: var(--gold); display: block; margin-bottom: 4px; }
+
+  /* ── ETF ALLOCATION CARDS ── */
+  .etf-alloc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 10px;
+    position: relative;
+    overflow: hidden;
+  }
+  .etf-alloc::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+  }
+  .c-blue::before  { background: var(--accent); }
+  .c-green::before { background: var(--green); }
+  .c-purple::before{ background: var(--purple); }
+  .c-gold::before  { background: var(--gold); }
+  .c-teal::before  { background: var(--teal); }
+  .c-red::before   { background: var(--red); }
+  .c-gray::before  { background: var(--muted); }
+  .c-pink::before  { background: #f472b6; }
+
+  .alloc-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+  .alloc-left { flex: 1; padding-right: 12px; }
+  .etf-ticker { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--accent); margin-bottom: 3px; }
+  .etf-name-full { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.3; }
+  .alloc-right { text-align: right; flex-shrink: 0; }
+  .dollar-amt { font-family: 'Space Mono', monospace; font-size: 22px; font-weight: 700; color: var(--green); }
+  .pct-amt { font-size: 11px; color: var(--muted); font-family: 'Space Mono', monospace; margin-top: 2px; }
+
+  .shares-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+  .share-chip {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 5px 10px;
+    font-size: 11px;
+    font-family: 'Space Mono', monospace;
+    color: var(--muted);
+  }
+  .share-chip span { color: var(--text); font-weight: 700; }
+
+  .bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+  .bar-bg { flex: 1; height: 6px; background: var(--surface2); border-radius: 10px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 10px; }
+  .bar-label { font-size: 10px; font-family: 'Space Mono', monospace; color: var(--muted); width: 70px; }
+
+  .note-text {
+    font-size: 12px;
+    color: #475569;
+    line-height: 1.5;
+    border-top: 1px solid var(--border);
+    padding-top: 10px;
+    margin-top: 6px;
+  }
+  .note-text strong { color: var(--text); }
+
+  /* ── SUMMARY GRID ── */
+  .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+  .sum-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
+  .sum-card .lbl { font-size: 10px; font-family: 'Space Mono', monospace; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 6px; }
+  .sum-card .val { font-size: 18px; font-weight: 700; font-family: 'Space Mono', monospace; color: var(--green); }
+  .sum-card .sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
+
+  /* ── PROJECTION TABLE ── */
+  .proj-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 16px; }
+  .proj-header { background: var(--surface2); padding: 12px 16px; display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 4px; }
+  .proj-header span { font-size: 10px; font-family: 'Space Mono', monospace; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+  .proj-row { padding: 12px 16px; display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 4px; border-bottom: 1px solid var(--border); align-items: center; }
+  .proj-row:last-child { border-bottom: none; }
+  .proj-row .year { font-family: 'Space Mono', monospace; font-size: 13px; color: var(--muted); font-weight: 700; }
+  .proj-row .conservative { font-family: 'Space Mono', monospace; font-size: 13px; color: var(--teal); font-weight: 600; }
+  .proj-row .moderate { font-family: 'Space Mono', monospace; font-size: 13px; color: var(--accent); font-weight: 600; }
+  .proj-row .aggressive { font-family: 'Space Mono', monospace; font-size: 13px; color: var(--green); font-weight: 600; }
+
+  /* ── CHECKLIST ── */
+  .checklist-item { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; display: flex; align-items: flex-start; gap: 12px; }
+  .check-num { width: 24px; height: 24px; background: var(--surface2); border: 1px solid var(--border); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-family: 'Space Mono', monospace; color: var(--accent); flex-shrink: 0; margin-top: 1px; }
+  .check-content .check-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+  .check-content .check-detail { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  /* ── SCENARIO CARDS ── */
+  .scenario-card { border-radius: 16px; padding: 20px; margin-bottom: 14px; border: 1px solid; position: relative; overflow: hidden; }
+  .scenario-card::after { content: ''; position: absolute; top: -40px; right: -40px; width: 120px; height: 120px; border-radius: 50%; opacity: 0.06; }
+  .sc-bear { background: #fef2f2; border-color: #fca5a5; }
+  .sc-bear::after { background: var(--red); }
+  .sc-base { background: #eff6ff; border-color: #93c5fd; }
+  .sc-base::after { background: var(--accent); }
+  .sc-bull { background: #f0fdf4; border-color: #86efac; }
+  .sc-bull::after { background: var(--green); }
+  .sc-moon { background: #fffbeb; border-color: #fcd34d; }
+  .sc-moon::after { background: var(--gold); }
+
+  .sc-tag { font-size: 11px; font-family: 'Space Mono', monospace; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; }
+  .sc-bear .sc-tag { color: var(--red); }
+  .sc-base .sc-tag { color: var(--accent); }
+  .sc-bull .sc-tag { color: var(--green); }
+  .sc-moon .sc-tag { color: var(--gold); }
+
+  .sc-title { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+  .sc-prob { font-size: 11px; color: var(--muted); margin-bottom: 12px; font-family: 'Space Mono', monospace; }
+  .sc-why { font-size: 12px; color: #374151; line-height: 1.5; margin-bottom: 12px; }
+  .sc-why strong { color: var(--text); }
+
+  .sc-amount-row { display: flex; align-items: flex-end; gap: 10px; margin-bottom: 14px; }
+  .sc-final { font-family: 'Space Mono', monospace; font-size: 36px; font-weight: 700; line-height: 1; }
+  .sc-bear .sc-final { color: var(--red); }
+  .sc-base .sc-final { color: var(--accent); }
+  .sc-bull .sc-final { color: var(--green); }
+  .sc-moon .sc-final { color: var(--gold); }
+
+  .sc-change { font-family: 'Space Mono', monospace; font-size: 14px; font-weight: 700; padding: 4px 10px; border-radius: 20px; margin-bottom: 4px; }
+  .sc-bear .sc-change { background: #fee2e2; color: var(--red); }
+  .sc-base .sc-change { background: #dbeafe; color: var(--accent); }
+  .sc-bull .sc-change { background: #dcfce7; color: var(--green); }
+  .sc-moon .sc-change { background: #fef3c7; color: var(--gold); }
+  .sc-profit { font-size: 12px; color: var(--muted); font-family: 'Space Mono', monospace; }
+
+  .etf-mini-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; border-top: 1px solid var(--border); padding-top: 12px; margin-top: 4px; }
+  .etf-mini { background: var(--surface2); border-radius: 8px; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center; }
+  .etf-mini-ticker { font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700; color: var(--muted); }
+  .etf-mini-val { font-family: 'Space Mono', monospace; font-size: 12px; font-weight: 700; }
+
+  /* ── BAR COMPARE ── */
+  .compare-section { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 18px; margin-bottom: 20px; }
+  .compare-title { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 16px; font-family: 'Space Mono', monospace; text-transform: uppercase; letter-spacing: 0.06em; }
+  .bar-compare-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .bcr-label { font-size: 11px; font-family: 'Space Mono', monospace; color: var(--muted); width: 60px; flex-shrink: 0; }
+  .bcr-bar-wrap { flex: 1; background: var(--surface2); border-radius: 6px; height: 28px; overflow: hidden; }
+  .bcr-bar { height: 100%; border-radius: 6px; display: flex; align-items: center; padding: 0 10px; }
+  .bcr-bar span { font-family: 'Space Mono', monospace; font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; }
+
+  /* ── MONTH TABLE ── */
+  .month-grid { display: grid; gap: 6px; }
+  .month-row { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; display: flex; align-items: center; gap: 12px; }
+  .month-name { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--muted); width: 32px; flex-shrink: 0; }
+  .range-low { font-family: 'Space Mono', monospace; font-size: 12px; color: var(--red); font-weight: 700; }
+  .range-mid { font-family: 'Space Mono', monospace; font-size: 12px; color: var(--accent); font-weight: 700; flex: 1; text-align: center; }
+  .range-high { font-family: 'Space Mono', monospace; font-size: 12px; color: var(--green); font-weight: 700; }
+  .month-event { font-size: 10px; color: var(--muted); width: 90px; text-align: right; line-height: 1.3; }
+
+  /* ── RISK CARDS ── */
+  .risk-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; display: flex; gap: 12px; align-items: flex-start; }
+  .risk-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .risk-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+  .risk-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .risk-impact { font-size: 10px; font-family: 'Space Mono', monospace; padding: 2px 7px; border-radius: 10px; margin-top: 5px; display: inline-block; }
+  .impact-high { background: #fee2e2; color: var(--red); }
+  .impact-med  { background: #fef3c7; color: var(--gold); }
+  .impact-low  { background: #dcfce7; color: var(--green); }
+
+  /* ── DONUT ── */
+  .donut-container { display: flex; align-items: center; gap: 20px; margin-bottom: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+  .legend { flex: 1; }
+  .legend-item { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 12px; color: var(--text); }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .legend-pct { margin-left: auto; font-family: 'Space Mono', monospace; font-size: 11px; color: var(--accent); font-weight: 700; }
+
+  /* ── TICKER GRID ── */
+  .ticker-grid { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px; }
+  .ticker-grid-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  /* ── FOOTER ── */
+  footer { margin-top: 32px; font-size: 11px; color: var(--muted); line-height: 1.6; border-top: 1px solid var(--border); padding-top: 14px; }
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="top-nav">
+  <div class="nav-logo">ETF $3K</div>
+  <div class="nav-btn active" onclick="showPage('overview')">Overview</div>
+  <div class="nav-btn" onclick="showPage('breakdown')">$ Breakdown</div>
+  <div class="nav-btn" onclick="showPage('forecast')">1 Saal Forecast</div>
+  <div class="nav-btn" onclick="showPage('longterm')">Long Term</div>
+  <div class="nav-btn" onclick="showPage('howto')">How to Buy</div>
+</nav>
+
+<!-- ════════════════════════════════════════
+     PAGE 1 — OVERVIEW
+════════════════════════════════════════ -->
+<div class="page active" id="page-overview">
+
+  <div class="hero">
+    <div class="hero-eyebrow">Global ETF Portfolio · 2026</div>
+    <h1>$<span class="hi">3,000</span> Investment Plan</h1>
+    <p class="hero-sub">9 ETFs · 7 Regions · Aggressive-Medium Risk · Core + Satellite Strategy</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><span class="hv">$2,400</span><div class="hl">Deployed</div></div>
+      <div class="hero-stat"><span class="hv">$600</span><div class="hl">Cash Reserve</div></div>
+      <div class="hero-stat"><span class="hv">+11%</span><div class="hl">Base Return</div></div>
+      <div class="hero-stat"><span class="hv">9</span><div class="hl">ETFs</div></div>
+    </div>
+  </div>
+
+  <!-- 1 Year range -->
+  <div class="minmax-banner">
+    <div class="mb-label">1 Saal Mein Aapka Portfolio</div>
+    <div class="mb-range">
+      <div class="mb-min">$2,160</div>
+      <div class="mb-arrow">→</div>
+      <div class="mb-max">$4,290</div>
+    </div>
+    <div class="mb-note">
+      Worst case: −28% (crash) &nbsp;·&nbsp; Best case: +43% (moon)<br>
+      <strong>Most likely: $3,330 – $3,750 (+11% to +25%)</strong>
+    </div>
+  </div>
+
+  <!-- Donut allocation -->
+  <div class="section-title">Portfolio Allocation</div>
+  <div class="donut-container">
+    <svg width="110" height="110" viewBox="0 0 110 110" flex-shrink="0">
+      <circle cx="55" cy="55" r="40" fill="none" stroke="#4f8ef7" stroke-width="18" stroke-dasharray="62.8 188.4" stroke-dashoffset="0" transform="rotate(-90 55 55)"/>
+      <circle cx="55" cy="55" r="40" fill="none" stroke="#a78bfa" stroke-width="18" stroke-dasharray="50.3 201.1" stroke-dashoffset="-62.8" transform="rotate(-90 55 55)"/>
+      <circle cx="55" cy="55" r="40" fill="none" stroke="#22d3a0" stroke-width="18" stroke-dasharray="37.7 213.5" stroke-dashoffset="-113.1" transform="rotate(-90 55 55)"/>
+      <circle cx="55" cy="55" r="40" fill="none" stroke="#f5a623" stroke-width="18" stroke-dasharray="37.7 213.5" stroke-dashoffset="-150.8" transform="rotate(-90 55 55)"/>
+      <circle cx="55" cy="55" r="40" fill="none" stroke="#2dd4bf" stroke-width="18" stroke-dasharray="25.1 226.1" stroke-dashoffset="-188.5" transform="rotate(-90 55 55)"/>
+      <circle cx="55" cy="55" r="40" fill="none" stroke="#f05252" stroke-width="18" stroke-dasharray="12.6 238.6" stroke-dashoffset="-213.6" transform="rotate(-90 55 55)"/>
+      <circle cx="55" cy="55" r="40" fill="none" stroke="#6b7280" stroke-width="18" stroke-dasharray="12.6 238.6" stroke-dashoffset="-226.2" transform="rotate(-90 55 55)"/>
+      <text x="55" y="58" text-anchor="middle" fill="#e8eaf0" font-size="10" font-family="Space Grotesk" font-weight="700">$3,000</text>
+    </svg>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#4f8ef7"></div>SPY — S&P 500<span class="legend-pct">25%</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:#a78bfa"></div>IEUR — Europe<span class="legend-pct">20%</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:#22d3a0"></div>QQQ — Nasdaq<span class="legend-pct">15%</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:#f5a623"></div>INDA — India<span class="legend-pct">15%</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:#2dd4bf"></div>EWJ — Japan<span class="legend-pct">10%</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:#f05252"></div>ASHR — China<span class="legend-pct">5%</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:#6b7280"></div>EWZ+KURE+Cash<span class="legend-pct">10%</span></div>
+    </div>
+  </div>
+
+  <!-- Strategy summary -->
+  <div class="info-box">
+    <strong>📌 Core + Satellite Strategy</strong>
+    60% Core (SPY + IEUR + QQQ) = stability aur proven returns. 40% Satellites (India, Japan, China, Brazil) = growth upside. $600 cash reserve = dips pe add karne ke liye.
+  </div>
+
+  <div class="summary-grid">
+    <div class="sum-card"><div class="lbl">US Exposure</div><div class="val">40%</div><div class="sub">SPY + QQQ</div></div>
+    <div class="sum-card"><div class="lbl">International</div><div class="val">60%</div><div class="sub">EU + Asia + EM</div></div>
+    <div class="sum-card"><div class="lbl">Core Holdings</div><div class="val">60%</div><div class="sub">Stable anchor</div></div>
+    <div class="sum-card"><div class="lbl">Satellites</div><div class="val">40%</div><div class="sub">Growth bets</div></div>
+  </div>
+
+  <footer>⚠️ This is not financial advice. All projections are illustrative. Consult a licensed advisor before investing.</footer>
+</div>
+
+<!-- ════════════════════════════════════════
+     PAGE 2 — $ BREAKDOWN
+════════════════════════════════════════ -->
+<div class="page" id="page-breakdown">
+
+  <div style="margin-bottom:20px;">
+    <div style="font-family:'Space Mono',monospace; font-size:10px; color:var(--accent); letter-spacing:0.18em; text-transform:uppercase; margin-bottom:6px;">Dollar Breakdown</div>
+    <div style="font-size:26px; font-weight:700;">Har ETF mein kitna?</div>
+    <div style="font-size:13px; color:var(--muted); margin-top:4px;">Exact investment per ETF with share counts</div>
+  </div>
+
+  <div style="background:linear-gradient(135deg,#dbeafe 0%,#eff6ff 100%); border:1px solid var(--accent); border-radius:16px; padding:20px; margin-bottom:20px; text-align:center;">
+    <div style="font-family:'Space Mono',monospace; font-size:40px; font-weight:700; color:var(--green); letter-spacing:-1px;">$3,000.00</div>
+    <div style="font-size:12px; color:var(--muted); margin-top:4px; font-family:'Space Mono',monospace; text-transform:uppercase; letter-spacing:0.1em;">Total Investment</div>
+    <div style="display:flex; justify-content:center; gap:24px; margin-top:14px; padding-top:14px; border-top:1px solid var(--border);">
+      <div><div style="font-family:'Space Mono',monospace;font-size:16px;font-weight:700;color:var(--accent)">$1,800</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Core (60%)</div></div>
+      <div><div style="font-family:'Space Mono',monospace;font-size:16px;font-weight:700;color:var(--accent)">$600</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Satellites (20%)</div></div>
+      <div><div style="font-family:'Space Mono',monospace;font-size:16px;font-weight:700;color:var(--gold)">$600</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Cash Reserve</div></div>
+    </div>
+  </div>
+
+  <div class="section-title">🔵 Core Holdings — $1,800 (60%)</div>
+
+  <div class="etf-alloc c-blue">
+    <div class="alloc-top">
+      <div class="alloc-left"><div class="etf-ticker">SPY</div><div class="etf-name-full">SPDR S&P 500 ETF Trust</div></div>
+      <div class="alloc-right"><div class="dollar-amt">$750</div><div class="pct-amt">25% of $3,000</div></div>
+    </div>
+    <div class="shares-row">
+      <div class="share-chip">Price: <span>$735.74</span></div>
+      <div class="share-chip">Shares: <span>~1.02</span></div>
+      <div class="share-chip"><span>Fractional OK</span></div>
+    </div>
+    <div class="bar-row"><span class="bar-label">Portfolio %</span><div class="bar-bg"><div class="bar-fill" style="width:25%;background:var(--accent)"></div></div><span style="font-size:11px;color:var(--accent);font-family:'Space Mono',monospace">25%</span></div>
+    <div class="note-text">Your anchor. Tracks 500 largest US companies. <strong>Most important buy</strong> — don't skip this.</div>
+  </div>
+
+  <div class="etf-alloc c-purple">
+    <div class="alloc-top">
+      <div class="alloc-left"><div class="etf-ticker">IEUR</div><div class="etf-name-full">iShares Core MSCI Europe ETF</div></div>
+      <div class="alloc-right"><div class="dollar-amt">$600</div><div class="pct-amt">20% of $3,000</div></div>
+    </div>
+    <div class="shares-row">
+      <div class="share-chip">Price: <span>$74.01</span></div>
+      <div class="share-chip">Shares: <span>~8.1</span></div>
+      <div class="share-chip"><span>Easy whole shares</span></div>
+    </div>
+    <div class="bar-row"><span class="bar-label">Portfolio %</span><div class="bar-bg"><div class="bar-fill" style="width:20%;background:var(--purple)"></div></div><span style="font-size:11px;color:var(--purple);font-family:'Space Mono',monospace">20%</span></div>
+    <div class="note-text">350+ European companies. <strong>Balances US concentration.</strong> Lower valuation = less downside.</div>
+  </div>
+
+  <div class="etf-alloc c-green">
+    <div class="alloc-top">
+      <div class="alloc-left"><div class="etf-ticker">QQQ</div><div class="etf-name-full">Invesco QQQ Trust (Nasdaq-100)</div></div>
+      <div class="alloc-right"><div class="dollar-amt">$450</div><div class="pct-amt">15% of $3,000</div></div>
+    </div>
+    <div class="shares-row">
+      <div class="share-chip">Price: <span>$715.93</span></div>
+      <div class="share-chip">Shares: <span>~0.63</span></div>
+      <div class="share-chip"><span>Fractional OK</span></div>
+    </div>
+    <div class="bar-row"><span class="bar-label">Portfolio %</span><div class="bar-bg"><div class="bar-fill" style="width:15%;background:var(--green)"></div></div><span style="font-size:11px;color:var(--green);font-family:'Space Mono',monospace">15%</span></div>
+    <div class="note-text">Pure tech growth amplifier. <strong>Pairs with SPY</strong> to tilt portfolio toward innovation.</div>
+  </div>
+
+  <div class="section-title">🟡 Satellite Growth — $600 (20%)</div>
+
+  <div class="etf-alloc c-gold">
+    <div class="alloc-top">
+      <div class="alloc-left"><div class="etf-ticker">INDA</div><div class="etf-name-full">iShares MSCI India ETF</div></div>
+      <div class="alloc-right"><div class="dollar-amt">$450</div><div class="pct-amt">15% of $3,000</div></div>
+    </div>
+    <div class="shares-row">
+      <div class="share-chip">Price: <span>$49.12</span></div>
+      <div class="share-chip">Shares: <span>~9.2</span></div>
+      <div class="share-chip"><span>Easy whole shares</span></div>
+    </div>
+    <div class="bar-row"><span class="bar-label">Portfolio %</span><div class="bar-bg"><div class="bar-fill" style="width:15%;background:var(--gold)"></div></div><span style="font-size:11px;color:var(--gold);font-family:'Space Mono',monospace">15%</span></div>
+    <div class="note-text"><strong>Highest growth potential.</strong> India GDP growing 6-7%/yr. Young population, tech boom.</div>
+  </div>
+
+  <div class="etf-alloc c-teal">
+    <div class="alloc-top">
+      <div class="alloc-left"><div class="etf-ticker">EWJ</div><div class="etf-name-full">iShares MSCI Japan ETF</div></div>
+      <div class="alloc-right"><div class="dollar-amt">$300</div><div class="pct-amt">10% of $3,000</div></div>
+    </div>
+    <div class="shares-row">
+      <div class="share-chip">Price: <span>$92.86</span></div>
+      <div class="share-chip">Shares: <span>~3.2</span></div>
+    </div>
+    <div class="bar-row"><span class="bar-label">Portfolio %</span><div class="bar-bg"><div class="bar-fill" style="width:10%;background:var(--teal)"></div></div><span style="font-size:11px;color:var(--teal);font-family:'Space Mono',monospace">10%</span></div>
+    <div class="note-text">Japan corporate reforms + cheap valuations. <strong>Value play with momentum.</strong></div>
+  </div>
+
+  <div class="section-title">🟣 Opportunistic — $300 (10%)</div>
+
+  <div class="etf-alloc c-red">
+    <div class="alloc-top">
+      <div class="alloc-left"><div class="etf-ticker">ASHR</div><div class="etf-name-full">Xtrackers Harvest CSI 300 China A-Shares</div></div>
+      <div class="alloc-right"><div class="dollar-amt">$150</div><div class="pct-amt">5% of $3,000</div></div>
+    </div>
+    <div class="shares-row">
+      <div class="share-chip">Price: <span>$36.12</span></div>
+      <div class="share-chip">Shares: <span>~4.2</span></div>
+    </div>
+    <div class="bar-row"><span class="bar-label">Portfolio %</span><div class="bar-bg"><div class="bar-fill" style="width:5%;background:var(--red)"></div></div><span style="font-size:11px;color:var(--red);font-family:'Space Mono',monospace">5%</span></div>
+    <div class="note-text">Small contrarian China bet. <strong>High risk, high reward.</strong> Keep allocation tiny.</div>
+  </div>
+
+  <div class="etf-alloc c-gray">
+    <div class="alloc-top">
+      <div class="alloc-left"><div class="etf-ticker">EWZ</div><div class="etf-name-full">iShares MSCI Brazil ETF</div></div>
+      <div class="alloc-right"><div class="dollar-amt">$90</div><div class="pct-amt">3% of $3,000</div></div>
+    </div>
+    <div class="shares-row"><div class="share-chip">Price: <span>$34.15</span></div><div class="share-chip">Shares: <span>~2.6</span></div></div>
+    <div class="bar-row"><span class="bar-label">Portfolio %</span><div class="bar-bg"><div class="bar-fill" style="width:3%;background:var(--muted)"></div></div><span style="font-size:11px;color:var(--muted);font-family:'Space Mono',monospace">3%</span></div>
+    <div class="note-text">LatAm commodity exposure. Adds true global diversification.</div>
+  </div>
+
+  <div class="etf-alloc c-pink">
+    <div class="alloc-top">
+      <div class="alloc-left"><div class="etf-ticker">KURE</div><div class="etf-name-full">KraneShares China Health Care ETF</div></div>
+      <div class="alloc-right"><div class="dollar-amt">$60</div><div class="pct-amt">2% of $3,000</div></div>
+    </div>
+    <div class="shares-row">
+      <div class="share-chip">Price: <span>$15.12</span></div>
+      <div class="share-chip">Shares: <span>~4.0</span></div>
+      <div class="share-chip" style="color:var(--green);border-color:#86efac"><span>Only ▲ green ETF</span></div>
+    </div>
+    <div class="bar-row"><span class="bar-label">Portfolio %</span><div class="bar-bg"><div class="bar-fill" style="width:2%;background:#f472b6"></div></div><span style="font-size:11px;color:#f472b6;font-family:'Space Mono',monospace">2%</span></div>
+    <div class="note-text">Only ETF showing green (+1.68%) on your list. Healthcare is defensive in China.</div>
+  </div>
+
+  <!-- Cash note -->
+  <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:14px;padding:16px;margin-top:10px;">
+    <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+      <div><div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--green)">CASH RESERVE</div><div style="font-size:14px;font-weight:600;color:var(--text)">Money Market Fund (~5%/yr)</div></div>
+      <div style="text-align:right;"><div style="font-family:'Space Mono',monospace;font-size:22px;color:var(--gold)">$600</div><div style="font-size:11px;color:var(--green)">+$30/yr safe</div></div>
+    </div>
+    <div style="font-size:12px;color:var(--muted)">Market -10% girne par is cash se average down karo. Never invest 100% at once.</div>
+  </div>
+
+  <footer style="margin-top:20px">⚠️ Share counts are approximate based on screenshot prices. Prices change daily — verify before buying.</footer>
+</div>
+
+<!-- ════════════════════════════════════════
+     PAGE 3 — 1 SAAL FORECAST
+════════════════════════════════════════ -->
+<div class="page" id="page-forecast">
+
+  <div style="margin-bottom:20px;">
+    <div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:6px;">1 Saal Ka Hisaab</div>
+    <div style="font-size:26px;font-weight:700;">$3,000 → Min se Max</div>
+    <div style="font-size:13px;color:var(--muted);margin-top:4px;">Real Wall Street 2026 forecasts ke basis par</div>
+  </div>
+
+  <div class="minmax-banner">
+    <div class="mb-label">12 Mahine Baad Aapka Portfolio</div>
+    <div class="mb-range">
+      <div class="mb-min">$2,160</div>
+      <div class="mb-arrow">→</div>
+      <div class="mb-max">$4,290</div>
+    </div>
+    <div class="mb-note">Worst: −28% (crash) &nbsp;·&nbsp; Best: +43% (moon)<br><strong>Most likely: $3,330 – $3,750 (+11% to +25%)</strong></div>
+  </div>
+
+  <!-- Inner tabs -->
+  <div class="inner-tabs">
+    <div class="itab active" onclick="showInner('f','scenarios')">4 Scenarios</div>
+    <div class="itab" onclick="showInner('f','monthly')">Month by Month</div>
+    <div class="itab" onclick="showInner('f','etfbig')">ETF by ETF</div>
+    <div class="itab" onclick="showInner('f','risks')">Risks</div>
+  </div>
+
+  <!-- Scenarios -->
+  <div class="ipanel active" id="f-scenarios">
+    <div class="scenario-card sc-bear">
+      <div class="sc-tag">🐻 Scenario 1 — Bear Case</div>
+      <div class="sc-title">Market Crash / Recession</div>
+      <div class="sc-prob">Probability: 20% · Iran war escalates, Fed hikes rates</div>
+      <div class="sc-why"><strong>Kya hoga:</strong> US-Iran conflict phail jaaye, oil $130+ ho, inflation 5%+, Fed rate cut cancel. S&P 500 −20 to −25% correction.</div>
+      <div class="sc-amount-row"><div class="sc-final">$2,160</div><div><div class="sc-change">▼ −28%</div><div class="sc-profit">Loss: −$840</div></div></div>
+      <div class="etf-mini-grid">
+        <div class="etf-mini"><span class="etf-mini-ticker">SPY</span><span class="etf-mini-val" style="color:var(--red)">$540</span></div>
+        <div class="etf-mini"><span class="etf-mini-ticker">QQQ</span><span class="etf-mini-val" style="color:var(--red)">$315</span></div>
+        <div class="etf-mini"><span class="etf-mini-ticker">IEUR</span><span class="etf-mini-val" style="color:var(--red)">$450</span></div>
+        <div class="etf-mini"><span class="etf-mini-ticker">INDA</span><span class="etf-mini-val" style="color:var(--orange)">$360</span></div>
+        <div class="etf-mini"><span class="etf-mini-ticker">EWJ</span><span class="etf-mini-val" style="color:var(--red)">$210</span></div>
+        <div class="etf-mini"><span class="etf-mini-ticker">Others</span><span class="etf-mini-val" style="color:var(--red)">$285</span></div>
+      </div>
+    </div>
+
+    <div class="scenario-card sc-base">
+      <div class="sc-tag">📊 Scenario 2 — Base Case (Most Likely)</div>
+      <div class="sc-title">Slow & Steady Growth</div>
+      <div class="sc-prob">Probability: 45% · Wall Street consensus 2026</div>
+      <div class="sc-why"><strong>Kya hoga:</strong> S&P 500 ~7,600-7,700 year-end (JPMorgan + Goldman). AI earnings impress. Iran ceasefire holds. Fed stable. Average +10-12%.</div>
+      <div class="sc-amount-row"><div class="sc-final">$3,330</div><div><div class="sc-change">▲ +11%</div><div class="sc-profit">Profit: +$330</div></div></div>
+      <div class="etf-mini-grid">
+        <div class="etf-mini"><span class="etf-mini-ticker">SPY</span><span class="etf-mini-val" style="color:var(--green)">$832</span></div>
+        <div class="etf-mini"><span class="etf-mini-ticker">QQQ</span><span class="etf-mini-val" style="color:var(--green)">$500</span></div>
+        <div class="etf-mini"><span class="etf-mini-ticker">IEUR</span><span class="etf-mini-val" style="color:var(--green)">$648</span></div>
+        <div class="etf-mini"><span class="etf-mini-ticker">INDA</span><span class="etf-mini-val" style="color:var(--green)">$508</span></div>
+        <div class="etf-mini"><span class="etf-mini-ticker">EWJ</span><span class="etf-mini-val" style="color:var(--green)">$333</span></div>
+        <div class="etf-mini"><span class="etf-mini-ticker">Others</span><span class="etf-mini-val" style="color:var(--green)">$330+</span></div>
+      </div>
+    </div>
+
+    <div class="scenario-card sc-bull">
+      <div class="sc-tag">🐂 Scenario 3 — Bull Case</div>
+      <div class="sc-title">Strong Rally — AI + India + Japan</div>
+      <div class="sc-prob">Probability: 25% · Yardeni 8,250 target hit</div>
+      <div class="sc-why"><strong>Kya hoga:</strong> Fed rate cut milta hai, AI earnings blow out, India GDP 7%+ confirm, Japan reforms accelerate. QQQ + INDA sabse zyada badhengi.</div>
+      <div class="sc-amount-row"><div class="sc-final">$3,750</div><div><div class="sc-change">▲ +25%</div><div class="sc-profit">Profit: +$750</div></div></div>
+      <div class="etf-mini-grid">
+        <div class="etf-mini"><span class="etf-mini-ticker">SPY</span><span class="etf-mini-val" style="color:var(--green)">$937</span></div>
+        <div class="etf-mini"><span class="etf-mini-ticker">QQQ</span><span class="etf-mini-val" style="color:var(--green)">$562</span></div>
+        <div class="etf-mini"><span class="etf-mini-ticker">IEUR</span><span class="etf-mini-val" style="color:var(--green)">$720</span></div>
+        <div class="etf-mini"><span class="etf-mini-ticker">INDA</span><span class="etf-mini-val" style="color:var(--green)">$585</span></div>
+        <div class="etf-mini"><span class="etf-mini-ticker">EWJ</span><span class="etf-mini-val" style="color:var(--green)">$375</span></div>
+        <div class="etf-mini"><span class="etf-mini-ticker">Others</span><span class="etf-mini-val" style="color:var(--green)">$571+</span></div>
+      </div>
+    </div>
+
+    <div class="scenario-card sc-moon">
+      <div class="sc-tag">🚀 Scenario 4 — Moon Case (10% chance)</div>
+      <div class="sc-title">Everything Goes Right</div>
+      <div class="sc-prob">Probability: 10% · 2023-2024 mega-rally repeats</div>
+      <div class="sc-why"><strong>Kya hoga:</strong> Iran peace deal, oil $70, Fed cuts 3 baar, China stimulus, India GDP 8%+. QQQ 30%+, INDA 35%+, ASHR 40%+.</div>
+      <div class="sc-amount-row"><div class="sc-final">$4,290</div><div><div class="sc-change">▲ +43%</div><div class="sc-profit">Profit: +$1,290</div></div></div>
+      <div class="etf-mini-grid">
+        <div class="etf-mini"><span class="etf-mini-ticker">SPY</span><span class="etf-mini-val" style="color:var(--gold)">$975</span></div>
+        <div class="etf-mini"><span class="etf-mini-ticker">QQQ</span><span class="etf-mini-val" style="color:var(--gold)">$585</span></div>
+        <div class="etf-mini"><span class="etf-mini-ticker">IEUR</span><span class="etf-mini-val" style="color:var(--gold)">$780</span></div>
+        <div class="etf-mini"><span class="etf-mini-ticker">INDA</span><span class="etf-mini-val" style="color:var(--gold)">$607</span></div>
+        <div class="etf-mini"><span class="etf-mini-ticker">EWJ</span><span class="etf-mini-val" style="color:var(--gold)">$390</span></div>
+        <div class="etf-mini"><span class="etf-mini-ticker">Others</span><span class="etf-mini-val" style="color:var(--gold)">$953+</span></div>
+      </div>
+    </div>
+
+    <div class="compare-section">
+      <div class="compare-title">$3,000 → 1 Saal Baad</div>
+      <div class="bar-compare-row"><span class="bcr-label" style="color:var(--red)">BEAR</span><div class="bcr-bar-wrap"><div class="bcr-bar" style="width:50%;background:linear-gradient(90deg,#dc2626,#f87171)"><span>$2,160 (−28%)</span></div></div></div>
+      <div class="bar-compare-row"><span class="bcr-label" style="color:var(--accent)">BASE</span><div class="bcr-bar-wrap"><div class="bcr-bar" style="width:77%;background:linear-gradient(90deg,#2563eb,#60a5fa)"><span>$3,330 (+11%)</span></div></div></div>
+      <div class="bar-compare-row"><span class="bcr-label" style="color:var(--green)">BULL</span><div class="bcr-bar-wrap"><div class="bcr-bar" style="width:87%;background:linear-gradient(90deg,#059669,#34d399)"><span>$3,750 (+25%)</span></div></div></div>
+      <div class="bar-compare-row"><span class="bcr-label" style="color:var(--gold)">MOON</span><div class="bcr-bar-wrap"><div class="bcr-bar" style="width:100%;background:linear-gradient(90deg,#d97706,#fbbf24)"><span>$4,290 (+43%)</span></div></div></div>
+    </div>
+  </div>
+
+  <!-- Monthly -->
+  <div class="ipanel" id="f-monthly">
+    <div class="info-box"><strong>📅 Month-by-Month Range</strong>Red = Bear · Blue = Base · Green = Bull. Key events jo market move karte hain.</div>
+    <div style="display:grid;grid-template-columns:50px 1fr 1fr 1fr 100px;gap:6px;padding:8px 10px;font-size:10px;font-family:'Space Mono',monospace;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px;">
+      <span>Month</span><span style="color:var(--red)">Bear</span><span style="color:var(--accent)">Base</span><span style="color:var(--green)">Bull</span><span>Key Event</span>
+    </div>
+    <div class="month-grid">
+      <div class="month-row"><span class="month-name">Jul</span><span class="range-low">$2,730</span><span class="range-mid">$3,045</span><span class="range-high">$3,120</span><span class="month-event">Q2 earnings season</span></div>
+      <div class="month-row"><span class="month-name">Aug</span><span class="range-low">$2,610</span><span class="range-mid">$3,060</span><span class="range-high">$3,180</span><span class="month-event">Volatile historically</span></div>
+      <div class="month-row"><span class="month-name">Sep</span><span class="range-low">$2,490</span><span class="range-mid">$3,030</span><span class="range-high">$3,210</span><span class="month-event">Worst month stocks</span></div>
+      <div class="month-row"><span class="month-name">Oct</span><span class="range-low">$2,520</span><span class="range-mid">$3,090</span><span class="range-high">$3,330</span><span class="month-event">Q3 earnings begin</span></div>
+      <div class="month-row"><span class="month-name">Nov</span><span class="range-low">$2,580</span><span class="range-mid">$3,150</span><span class="range-high">$3,480</span><span class="month-event">Fed decision</span></div>
+      <div class="month-row"><span class="month-name">Dec</span><span class="range-low">$2,700</span><span class="range-mid">$3,240</span><span class="range-high">$3,600</span><span class="month-event">Year-end rally</span></div>
+      <div class="month-row"><span class="month-name">Jan</span><span class="range-low">$2,640</span><span class="range-mid">$3,210</span><span class="range-high">$3,660</span><span class="month-event">New year positioning</span></div>
+      <div class="month-row"><span class="month-name">Feb</span><span class="range-low">$2,520</span><span class="range-mid">$3,240</span><span class="range-high">$3,720</span><span class="month-event">Q4 earnings</span></div>
+      <div class="month-row"><span class="month-name">Mar</span><span class="range-low">$2,460</span><span class="range-mid">$3,300</span><span class="range-high">$3,780</span><span class="month-event">Fed meeting + CPI</span></div>
+      <div class="month-row"><span class="month-name">Apr</span><span class="range-low">$2,370</span><span class="range-mid">$3,270</span><span class="range-high">$3,810</span><span class="month-event">Historically volatile</span></div>
+      <div class="month-row"><span class="month-name">May</span><span class="range-low">$2,280</span><span class="range-mid">$3,300</span><span class="range-high">$3,840</span><span class="month-event">"Sell in May" risk</span></div>
+      <div class="month-row" style="border:1px solid #86efac;background:#f0fdf4">
+        <span class="month-name" style="color:var(--green)">Jun</span>
+        <span class="range-low">$2,160</span>
+        <span class="range-mid" style="color:var(--accent);font-weight:700">$3,330</span>
+        <span class="range-high" style="color:var(--green);font-weight:700">$3,750</span>
+        <span class="month-event" style="color:var(--green)">1 Saal Complete!</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ETF by ETF -->
+  <div class="ipanel" id="f-etfbig">
+    <div class="info-box"><strong>📌 Base Case mein har ETF</strong>12 mahine baad expected value — sab 4 scenarios mein.</div>
+    <div style="display:grid;gap:8px;">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;"><div style="display:flex;justify-content:space-between;margin-bottom:8px;"><div><div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--accent)">SPY · $750</div><div style="font-size:14px;font-weight:600;color:var(--text)">SPDR S&P 500 ETF</div></div><div style="text-align:right;"><div style="font-family:'Space Mono',monospace;font-size:18px;color:var(--green)">$832</div><div style="font-size:11px;color:var(--green)">+$82 (+11%)</div></div></div><div style="display:flex;gap:6px;font-size:11px;font-family:'Space Mono',monospace;flex-wrap:wrap;"><span style="color:var(--red)">Bear: $585</span><span style="color:var(--muted)">·</span><span style="color:var(--accent)">Base: $832</span><span style="color:var(--muted)">·</span><span style="color:var(--green)">Bull: $937</span><span style="color:var(--muted)">·</span><span style="color:var(--gold)">Moon: $975</span></div></div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;"><div style="display:flex;justify-content:space-between;margin-bottom:8px;"><div><div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--purple)">IEUR · $600</div><div style="font-size:14px;font-weight:600;color:var(--text)">iShares MSCI Europe ETF</div></div><div style="text-align:right;"><div style="font-family:'Space Mono',monospace;font-size:18px;color:var(--green)">$648</div><div style="font-size:11px;color:var(--green)">+$48 (+8%)</div></div></div><div style="display:flex;gap:6px;font-size:11px;font-family:'Space Mono',monospace;flex-wrap:wrap;"><span style="color:var(--red)">Bear: $456</span><span style="color:var(--muted)">·</span><span style="color:var(--accent)">Base: $648</span><span style="color:var(--muted)">·</span><span style="color:var(--green)">Bull: $720</span><span style="color:var(--muted)">·</span><span style="color:var(--gold)">Moon: $780</span></div></div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;"><div style="display:flex;justify-content:space-between;margin-bottom:8px;"><div><div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--green)">QQQ · $450</div><div style="font-size:14px;font-weight:600;color:var(--text)">Invesco QQQ Trust</div></div><div style="text-align:right;"><div style="font-family:'Space Mono',monospace;font-size:18px;color:var(--green)">$500</div><div style="font-size:11px;color:var(--green)">+$50 (+11%)</div></div></div><div style="display:flex;gap:6px;font-size:11px;font-family:'Space Mono',monospace;flex-wrap:wrap;"><span style="color:var(--red)">Bear: $337</span><span style="color:var(--muted)">·</span><span style="color:var(--accent)">Base: $500</span><span style="color:var(--muted)">·</span><span style="color:var(--green)">Bull: $562</span><span style="color:var(--muted)">·</span><span style="color:var(--gold)">Moon: $585</span></div></div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;"><div style="display:flex;justify-content:space-between;margin-bottom:8px;"><div><div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--gold)">INDA · $450 ⭐</div><div style="font-size:14px;font-weight:600;color:var(--text)">iShares MSCI India ETF</div></div><div style="text-align:right;"><div style="font-family:'Space Mono',monospace;font-size:18px;color:var(--green)">$508</div><div style="font-size:11px;color:var(--green)">+$58 (+13%)</div></div></div><div style="display:flex;gap:6px;font-size:11px;font-family:'Space Mono',monospace;flex-wrap:wrap;"><span style="color:var(--red)">Bear: $360</span><span style="color:var(--muted)">·</span><span style="color:var(--accent)">Base: $508</span><span style="color:var(--muted)">·</span><span style="color:var(--green)">Bull: $585</span><span style="color:var(--muted)">·</span><span style="color:var(--gold)">Moon: $607</span></div></div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;"><div style="display:flex;justify-content:space-between;margin-bottom:8px;"><div><div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--teal)">EWJ · $300</div><div style="font-size:14px;font-weight:600;color:var(--text)">iShares MSCI Japan ETF</div></div><div style="text-align:right;"><div style="font-family:'Space Mono',monospace;font-size:18px;color:var(--green)">$333</div><div style="font-size:11px;color:var(--green)">+$33 (+11%)</div></div></div><div style="display:flex;gap:6px;font-size:11px;font-family:'Space Mono',monospace;flex-wrap:wrap;"><span style="color:var(--red)">Bear: $210</span><span style="color:var(--muted)">·</span><span style="color:var(--accent)">Base: $333</span><span style="color:var(--muted)">·</span><span style="color:var(--green)">Bull: $375</span><span style="color:var(--muted)">·</span><span style="color:var(--gold)">Moon: $390</span></div></div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;"><div style="display:flex;justify-content:space-between;margin-bottom:8px;"><div><div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--red)">ASHR · $150</div><div style="font-size:14px;font-weight:600;color:var(--text)">CSI 300 China A-Shares</div></div><div style="text-align:right;"><div style="font-family:'Space Mono',monospace;font-size:18px;color:var(--accent)">$165</div><div style="font-size:11px;color:var(--accent)">+$15 (+10%)</div></div></div><div style="display:flex;gap:6px;font-size:11px;font-family:'Space Mono',monospace;flex-wrap:wrap;"><span style="color:var(--red)">Bear: $105</span><span style="color:var(--muted)">·</span><span style="color:var(--accent)">Base: $165</span><span style="color:var(--muted)">·</span><span style="color:var(--green)">Bull: $195</span><span style="color:var(--muted)">·</span><span style="color:var(--gold)">Moon: $225</span></div></div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;"><div style="display:flex;justify-content:space-between;margin-bottom:8px;"><div><div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--muted)">EWZ + KURE · $150</div><div style="font-size:14px;font-weight:600;color:var(--text)">Brazil + China Healthcare</div></div><div style="text-align:right;"><div style="font-family:'Space Mono',monospace;font-size:18px;color:var(--green)">$165</div><div style="font-size:11px;color:var(--green)">+$15 (+10%)</div></div></div><div style="display:flex;gap:6px;font-size:11px;font-family:'Space Mono',monospace;flex-wrap:wrap;"><span style="color:var(--red)">Bear: $105</span><span style="color:var(--muted)">·</span><span style="color:var(--accent)">Base: $165</span><span style="color:var(--muted)">·</span><span style="color:var(--green)">Bull: $210</span><span style="color:var(--muted)">·</span><span style="color:var(--gold)">Moon: $273</span></div></div>
+      <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:12px;padding:14px;"><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><div><div style="font-family:'Space Mono',monospace;font-size:11px;color:var(--green)">CASH · $600</div><div style="font-size:14px;font-weight:600;color:var(--text)">Money Market Fund (~5%)</div></div><div style="text-align:right;"><div style="font-family:'Space Mono',monospace;font-size:18px;color:var(--green)">$630</div><div style="font-size:11px;color:var(--green)">+$30 (safe)</div></div></div><div style="font-size:12px;color:var(--muted)">Kisi bhi scenario mein safe. Dip pe deploy karo.</div></div>
+    </div>
+  </div>
+
+  <!-- Risks -->
+  <div class="ipanel" id="f-risks">
+    <div class="section-title">Jo cheezein portfolio gira sakti hain</div>
+    <div class="risk-card"><div class="risk-icon">⚔️</div><div><div class="risk-title">Iran-US War Escalation</div><div class="risk-desc">Strait of Hormuz band ho to oil $130+. Energy costs badhengi, inflation spike, Fed rate cut cancel. Markets −15 to −25%.</div><div class="risk-impact impact-high">HIGH IMPACT · 20% probability</div></div></div>
+    <div class="risk-card"><div class="risk-icon">📈</div><div><div class="risk-title">Inflation Wapas Aaye (3.5%+)</div><div class="risk-desc">March 2026 CPI already 3.3% tha. Fed rate cut nahi dega. Growth stocks (QQQ) ko sabse zyada nuksaan.</div><div class="risk-impact impact-high">HIGH IMPACT · 30% probability</div></div></div>
+    <div class="risk-card"><div class="risk-icon">🇨🇳</div><div><div class="risk-title">China Regulatory Crackdown</div><div class="risk-desc">China government kisi bhi waqt tech companies pe action le sakta hai. ASHR + KURE dono impact honge.</div><div class="risk-impact impact-med">MEDIUM IMPACT · 25% probability</div></div></div>
+    <div class="risk-card"><div class="risk-icon">💹</div><div><div class="risk-title">Yen Currency Risk (Japan)</div><div class="risk-desc">Japan ETF returns yen-dollar exchange rate se bhi aate hain. Yen weak hua to dollar returns km honge.</div><div class="risk-impact impact-med">MEDIUM IMPACT · 35% probability</div></div></div>
+    <div class="risk-card"><div class="risk-icon">🤖</div><div><div class="risk-title">AI Earnings Disappointment</div><div class="risk-desc">Agar Microsoft, Nvidia, Alphabet earnings disappoint kare, QQQ + SPY dono crash ho sakte hain.</div><div class="risk-impact impact-med">MEDIUM IMPACT · 20% probability</div></div></div>
+    <div class="risk-card"><div class="risk-icon">🇮🇳</div><div><div class="risk-title">India Political / Slowdown Risk</div><div class="risk-desc">India mein economic slowdown ya policy uncertainty se INDA impact ho sakta hai. Long-term story still strong hai.</div><div class="risk-impact impact-low">LOW IMPACT · 15% probability</div></div></div>
+
+    <div class="section-title">Portfolio ko protect kaise karen</div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;display:grid;gap:10px;">
+      <div style="display:flex;gap:10px;align-items:flex-start;"><span style="font-size:16px">✅</span><div style="font-size:13px;color:var(--text)"><strong>$600 cash reserve rakho</strong> — market −10% girne par add karo, average down hoga</div></div>
+      <div style="display:flex;gap:10px;align-items:flex-start;"><span style="font-size:16px">✅</span><div style="font-size:13px;color:var(--text)"><strong>Panic sell mat karo</strong> — temporary dips permanent loss nahi hote</div></div>
+      <div style="display:flex;gap:10px;align-items:flex-start;"><span style="font-size:16px">✅</span><div style="font-size:13px;color:var(--text)"><strong>China exposure 5% pe rakhna</strong> — high risk position hai, zyada mat badao</div></div>
+      <div style="display:flex;gap:10px;align-items:flex-start;"><span style="font-size:16px">✅</span><div style="font-size:13px;color:var(--text)"><strong>Quarterly review karo</strong> — Oct + Jan mein portfolio check karo aur rebalance karo</div></div>
+    </div>
+  </div>
+
+  <footer>⚠️ Yeh financial advice nahi hai. Market predictions uncertain hoti hain. Wall Street forecasts (JPMorgan 7,600, Yardeni 8,250, Goldman 7,600) se estimated hain. Licensed advisor se consult karein.</footer>
+</div>
+
+<!-- ════════════════════════════════════════
+     PAGE 4 — LONG TERM
+════════════════════════════════════════ -->
+<div class="page" id="page-longterm">
+
+  <div style="margin-bottom:20px;">
+    <div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:6px;">Long-Term Growth</div>
+    <div style="font-size:26px;font-weight:700;">$3,000 → 20 Saal Baad</div>
+    <div style="font-size:13px;color:var(--muted);margin-top:4px;">Compounding ki taqat — reinvested dividends assumed</div>
+  </div>
+
+  <div class="info-box"><strong>📊 3 Scenarios — Conservative / Moderate / Aggressive</strong>Conservative = 6%/yr (European ETFs average), Moderate = 9%/yr (global mix), Aggressive = 13%/yr (heavy QQQ + INDA outperformance).</div>
+
+  <div class="proj-card">
+    <div class="proj-header"><span>Year</span><span>Conservative</span><span>Moderate</span><span>Aggressive</span></div>
+    <div class="proj-row"><span class="year">Y1</span><span class="conservative">$3,180</span><span class="moderate">$3,270</span><span class="aggressive">$3,390</span></div>
+    <div class="proj-row"><span class="year">Y2</span><span class="conservative">$3,371</span><span class="moderate">$3,564</span><span class="aggressive">$3,831</span></div>
+    <div class="proj-row"><span class="year">Y3</span><span class="conservative">$3,573</span><span class="moderate">$3,885</span><span class="aggressive">$4,328</span></div>
+    <div class="proj-row"><span class="year">Y5</span><span class="conservative">$4,015</span><span class="moderate">$4,616</span><span class="aggressive">$5,523</span></div>
+    <div class="proj-row"><span class="year">Y10</span><span class="conservative">$5,373</span><span class="moderate">$7,102</span><span class="aggressive">$10,179</span></div>
+    <div class="proj-row"><span class="year">Y15</span><span class="conservative">$7,193</span><span class="moderate">$10,930</span><span class="aggressive">$18,762</span></div>
+    <div class="proj-row"><span class="year">Y20</span><span class="conservative">$9,621</span><span class="moderate">$16,820</span><span class="aggressive">$34,563</span></div>
+  </div>
+
+  <div class="warning-box"><strong>⚡ Power of Monthly Additions</strong>Agar aap sirf $100/month add karo, 10-saal mein moderate scenario mein $7,102 → ~$26,500 ho jata hai. Regular additions > timing the market.</div>
+
+  <div class="section-title">Expected Returns by Region</div>
+
+  <div class="etf-alloc c-gold" style="margin-bottom:8px">
+    <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px">🇮🇳 India (INDA) — Highest Expected</div>
+    <div class="bar-row"><span class="bar-label">10yr outlook</span><div class="bar-bg"><div class="bar-fill" style="width:88%;background:var(--gold)"></div></div><span style="font-size:11px;color:var(--gold);font-family:'Space Mono',monospace">~12%/yr</span></div>
+    <div class="note-text" style="border:none;padding:0;margin-top:8px">Fastest growing major economy. Demographics favor decades of expansion.</div>
+  </div>
+  <div class="etf-alloc c-green" style="margin-bottom:8px">
+    <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px">🇺🇸 QQQ (Nasdaq-100) — Strong Expected</div>
+    <div class="bar-row"><span class="bar-label">10yr outlook</span><div class="bar-bg"><div class="bar-fill" style="width:82%;background:var(--green)"></div></div><span style="font-size:11px;color:var(--green);font-family:'Space Mono',monospace">~11%/yr</span></div>
+    <div class="note-text" style="border:none;padding:0;margin-top:8px">Tech + AI boom benefits Nasdaq disproportionately.</div>
+  </div>
+  <div class="etf-alloc c-blue" style="margin-bottom:8px">
+    <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px">🇺🇸 SPY (S&P 500) — Reliable</div>
+    <div class="bar-row"><span class="bar-label">10yr outlook</span><div class="bar-bg"><div class="bar-fill" style="width:75%;background:var(--accent)"></div></div><span style="font-size:11px;color:var(--accent);font-family:'Space Mono',monospace">~9–10%/yr</span></div>
+    <div class="note-text" style="border:none;padding:0;margin-top:8px">Historical average ~10.7%/yr since 1957. Most reliable long-term ETF.</div>
+  </div>
+  <div class="etf-alloc c-teal" style="margin-bottom:8px">
+    <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px">🇯🇵 Japan (EWJ) — Value Opportunity</div>
+    <div class="bar-row"><span class="bar-label">10yr outlook</span><div class="bar-bg"><div class="bar-fill" style="width:68%;background:var(--teal)"></div></div><span style="font-size:11px;color:var(--teal);font-family:'Space Mono',monospace">~7–9%/yr</span></div>
+    <div class="note-text" style="border:none;padding:0;margin-top:8px">Corporate reform cycle has decades to run. Undervalued vs. peers.</div>
+  </div>
+  <div class="etf-alloc c-purple" style="margin-bottom:8px">
+    <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px">🇪🇺 Europe (IEUR) — Steady</div>
+    <div class="bar-row"><span class="bar-label">10yr outlook</span><div class="bar-bg"><div class="bar-fill" style="width:62%;background:var(--purple)"></div></div><span style="font-size:11px;color:var(--purple);font-family:'Space Mono',monospace">~6–8%/yr</span></div>
+    <div class="note-text" style="border:none;padding:0;margin-top:8px">Lower growth but stable. Currency diversification from USD is a bonus.</div>
+  </div>
+
+  <footer>⚠️ Projections are illustrative only. Past performance does not guarantee future returns. All investments carry risk of loss.</footer>
+</div>
+
+<!-- ════════════════════════════════════════
+     PAGE 5 — HOW TO BUY
+════════════════════════════════════════ -->
+<div class="page" id="page-howto">
+
+  <div style="margin-bottom:20px;">
+    <div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--accent);letter-spacing:0.18em;text-transform:uppercase;margin-bottom:6px;">Step-by-Step Guide</div>
+    <div style="font-size:26px;font-weight:700;">Kaise Khareedein?</div>
+    <div style="font-size:13px;color:var(--muted);margin-top:4px;">Broker se leke final buy order tak — complete guide</div>
+  </div>
+
+  <div class="info-box"><strong>🛒 Kya chahiye?</strong>Ek US brokerage account (Fidelity, Schwab, or Interactive Brokers recommended). Zero commission + fractional shares support. India se bhi open ho sakta hai via IBKR.</div>
+
+  <div class="section-title">Buy Order Checklist</div>
+  <div class="checklist-item"><div class="check-num">1</div><div class="check-content"><div class="check-title">Brokerage account open karo</div><div class="check-detail">Fidelity (zero commissions, fractional shares), Schwab, ya Interactive Brokers. 1-3 din mein verify + fund hota hai. India se IBKR best option hai.</div></div></div>
+  <div class="checklist-item"><div class="check-num">2</div><div class="check-content"><div class="check-title">$3,000 deposit karo</div><div class="check-detail">Bank transfer (ACH/wire) — usually free. 1-3 business days mein aata hai. Kuch brokers instant buying power dete hain.</div></div></div>
+  <div class="checklist-item"><div class="check-num">3</div><div class="check-content"><div class="check-title">SPY khareedein — $750</div><div class="check-detail">Ticker "SPY" search karo. Dollar-amount order $750 (fractional). Market order use karo 9:30am–4pm EST ke beech.</div></div></div>
+  <div class="checklist-item"><div class="check-num">4</div><div class="check-content"><div class="check-title">IEUR khareedein — $600</div><div class="check-detail">iShares Core MSCI Europe ETF. ~$74 pe ~8 full shares milenge. Easy whole-share purchase.</div></div></div>
+  <div class="checklist-item"><div class="check-num">5</div><div class="check-content"><div class="check-title">QQQ khareedein — $450</div><div class="check-detail">Invesco QQQ Trust. Fractional order for $450. Tech exposure ke liye must-buy.</div></div></div>
+  <div class="checklist-item"><div class="check-num">6</div><div class="check-content"><div class="check-title">INDA khareedein — $450</div><div class="check-detail">iShares MSCI India ETF. ~$49 pe ~9 full shares. Aapka best emerging market bet.</div></div></div>
+  <div class="checklist-item"><div class="check-num">7</div><div class="check-content"><div class="check-title">EWJ khareedein — $300</div><div class="check-detail">iShares MSCI Japan ETF. ~$93 pe ~3 full shares. Japan exposure complete.</div></div></div>
+  <div class="checklist-item"><div class="check-num">8</div><div class="check-content"><div class="check-title">ASHR khareedein — $150</div><div class="check-detail">Xtrackers Harvest CSI 300. ~$36 pe ~4 shares. China A-shares contrarian position.</div></div></div>
+  <div class="checklist-item"><div class="check-num">9</div><div class="check-content"><div class="check-title">EWZ + KURE — $150</div><div class="check-detail">$90 Brazil ETF (~2 shares) + $60 China Healthcare (~4 shares). Chhoti opportunistic positions.</div></div></div>
+  <div class="checklist-item"><div class="check-num">10</div><div class="check-content"><div class="check-title">$600 cash rakho — Money Market mein</div><div class="check-detail">Broker ke money market fund mein rakho (~4-5% interest safe). Jab market −10% gire tab deploy karo SPY ya INDA mein.</div></div></div>
+
+  <div class="warning-box" style="margin-top:16px"><strong>⏰ Timing Tip</strong>Sab kuch ek saath mat khareedein. 2-3 installments mein 4-6 hafte mein khareedein. Dollar-cost averaging timing risk reduce karta hai significantly.</div>
+
+  <div class="section-title">Quick Reference — Tickers to Search</div>
+  <div class="ticker-grid">
+    <div class="ticker-grid-inner">
+      <div style="font-family:'Space Mono',monospace;font-size:13px;color:var(--accent)">SPY <span style="color:var(--muted);font-size:11px">$750</span></div>
+      <div style="font-family:'Space Mono',monospace;font-size:13px;color:var(--purple)">IEUR <span style="color:var(--muted);font-size:11px">$600</span></div>
+      <div style="font-family:'Space Mono',monospace;font-size:13px;color:var(--green)">QQQ <span style="color:var(--muted);font-size:11px">$450</span></div>
+      <div style="font-family:'Space Mono',monospace;font-size:13px;color:var(--gold)">INDA <span style="color:var(--muted);font-size:11px">$450</span></div>
+      <div style="font-family:'Space Mono',monospace;font-size:13px;color:var(--teal)">EWJ <span style="color:var(--muted);font-size:11px">$300</span></div>
+      <div style="font-family:'Space Mono',monospace;font-size:13px;color:var(--red)">ASHR <span style="color:var(--muted);font-size:11px">$150</span></div>
+      <div style="font-family:'Space Mono',monospace;font-size:13px;color:var(--muted)">EWZ <span style="color:var(--muted);font-size:11px">$90</span></div>
+      <div style="font-family:'Space Mono',monospace;font-size:13px;color:#f472b6">KURE <span style="color:var(--muted);font-size:11px">$60</span></div>
+    </div>
+    <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-family:'Space Mono',monospace;font-size:13px;color:var(--green)">💵 CASH RESERVE: $600 (money market)</div>
+  </div>
+
+  <footer>⚠️ This is not financial advice. Share counts are approximate based on screenshot prices which may be outdated. Verify current prices before placing orders. Consult a licensed financial advisor. All investments carry risk of loss.</footer>
+</div>
+
+<script>
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('page-' + id).classList.add('active');
+    document.querySelectorAll('.nav-btn').forEach((b, i) => {
+      if (['overview','breakdown','forecast','longterm','howto'][i] === id) b.classList.add('active');
+    });
+    window.scrollTo(0, 0);
+  }
+
+  function showInner(prefix, id) {
+    const panels = document.querySelectorAll('[id^="' + prefix + '-"]');
+    panels.forEach(p => p.classList.remove('active'));
+    document.getElementById(prefix + '-' + id).classList.add('active');
+    const tabs = document.querySelectorAll('#page-forecast .itab');
+    const ids = ['scenarios','monthly','etfbig','risks'];
+    tabs.forEach((t, i) => t.classList.toggle('active', ids[i] === id));
+  }
+</script>
+</body>
+</html>
